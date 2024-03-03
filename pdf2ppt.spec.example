@@ -7,8 +7,8 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[
-        ('/opt/homebrew/bin/', 'pdftoppm'),
-        ('/Users/kang/Library/Caches/pypoetry/virtualenvs/pdf2ppt-8sXfz0e7-py3.10/lib/python3.10/site-packages/pptx/templates/default.pptx', 'pptx/templates')
+        ('/path/to/pdftoppm/binaries/*', 'poppler/'),
+        ('/path/to/pptx/templates/default.pptx', 'pptx/templates')
     ],
     hiddenimports=[],
     hookspath=[],

@@ -3,16 +3,14 @@ import sys
 import subprocess
 import time
 import os
+# import traceback
 
 from functools import partial
 
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QFileDialog, QMessageBox
 from PyQt6.QtCore import QThread, pyqtSignal
 
-from .convert import convert
-
-
-DEBUG = 0
+from .convert import convert, DEBUG
 
 
 class WorkerThread(QThread):
@@ -28,6 +26,7 @@ class WorkerThread(QThread):
 
             self.finished_signal.emit()
         except Exception as e:
+            # self.error_signal.emit(traceback.format_exc())
             self.error_signal.emit(str(e))
 
 
@@ -106,7 +105,7 @@ class PdfConverterApp(QWidget):
 
     def start_conversion(self):
         self.set_status('Busy')
-        busy_message_box = self.show_busy_message('Converting...')
+        busy_message_box = self.show_busy_message("Converting...\n稍微一等...")
 
         self.worker_thread.finished_signal.connect(  # pyright: ignore reportUnknownMemberType
             partial(self.on_worker_finished, busy_message_box=busy_message_box)

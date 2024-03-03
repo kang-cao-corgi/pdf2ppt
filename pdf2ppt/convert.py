@@ -1,21 +1,27 @@
 import os
-
+import platform
+from typing import Sequence, List, Optional
 from PIL import Image
-from pdf2image import convert_from_path
-from pptx import Presentation
+from pdf2image import convert_from_path  # pyright: ignore reportUnknownVariableType
+from pptx import Presentation  # pyright: ignore reportUnknownVariableType
 from io import BytesIO
+from pathlib import PurePath
 
 
+DEBUG = 0
 PIXEL_TO_EMU_RATIO = 3_000
-
 DPI = 96
 
 
-def pixels_to_emu(pixels):
-      return pixels * PIXEL_TO_EMU_RATIO
+def pixels_to_emu(pixels: int):
+      return pixels * PIXEL_TO_EMU_RATIO  # TODO: finer control
 
 
-def save_images(image_list, output_folder='output_images', file_prefix='image'):
+def save_images(
+    image_list: Sequence[Image.Image],
+    output_folder: str ='output_images',
+    file_prefix: str ='image'
+):
     """
     Save a list of PIL image objects to individual files.
 
@@ -33,7 +39,10 @@ def save_images(image_list, output_folder='output_images', file_prefix='image'):
         img.save(filepath)
 
 
-def load_images(folder_path='output_images', file_prefix='image'):
+def load_images(
+    folder_path: str = 'output_images',
+    file_prefix: str = 'image'
+) -> Sequence[Image.Image]:
     """
     Load a list of PIL image objects from individual files.
 
@@ -44,7 +53,7 @@ def load_images(folder_path='output_images', file_prefix='image'):
     Returns:
     - List of PIL image objects.
     """
-    image_list = []
+    image_list: List[Image.Image] = []
 
     for filename in sorted(os.listdir(folder_path)):
         if filename.startswith(file_prefix) and filename.endswith('.png'):
@@ -55,34 +64,34 @@ def load_images(folder_path='output_images', file_prefix='image'):
     return image_list
 
 
+def get_poppler_path() -> Optional[PurePath]:
+    if platform.system().lower() == "windows" and (not DEBUG):
+        return PurePath(__file__).parent.parent / "poppler/bin"  # XXX: list your own path
+    return None  # use default in mac / debug
+
+
 def convert(
     input_file_path: str,
     output_path: str,
 ):
-	# pdf_file = sys.argv[1]
-	# pdf_file = "sample.pdf"
 
 	print("Converting file: " + input_file_path)
 
-
 	# Prep presentation
-	prs = Presentation()
-	blank_slide_layout = prs.slide_layouts[6]
+	prs = Presentation()  # pyright: ignore reportUnknownVariableType
+	blank_slide_layout = prs.slide_layouts[6]  # pyright: ignore reportUnknownVariableType
 
 	# Create working folder
 	base_name = input_file_path.split("/")[-1].split(".pdf")[0]
 
 	# Convert PDF to list of images
 	print("Starting conversion...")
-	slideimgs = convert_from_path(input_file_path, DPI, fmt='ppm', thread_count=3)
-	# slideimgs = load_images()
+
+	slideimgs = convert_from_path(input_file_path, DPI, fmt='ppm', thread_count=3, poppler_path=get_poppler_path())  # pyright: ignore reportArgumentType
+
 	print("...complete.")
 
-	# save_images(slideimgs)
-	# slideimgs = load_images()
-
 	# Loop over slides
-
 	for i, slideimg in enumerate(slideimgs):
 		if i % 10 == 0:
 			print("Saving slide: " + str(i))
@@ -101,13 +110,10 @@ def convert(
 		prs.slide_width = width_emu
 
 		# Add slide
-		slide = prs.slides.add_slide(blank_slide_layout)
-		slide.shapes.add_picture(imagefile, 0, 0, width=width_emu, height=height_emu)
+		slide = prs.slides.add_slide(blank_slide_layout)  # pyright: ignore reportUnknownMemberType
+		slide.shapes.add_picture(imagefile, 0, 0, width=width_emu, height=height_emu)  # pyright: ignore reportUnknownMemberType
 
 	# Save Powerpoint
 	print("Saving file: " + base_name + ".pptx")
-	prs.save(f'{output_path}/{base_name}.pptx')
+	prs.save(f'{output_path}/{base_name}.pptx')  # pyright: ignore reportUnknownMemberType
 	print("Conversion complete. :)")
-
-if __name__ == "__main__":
-	convert()

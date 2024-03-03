@@ -1,4 +1,4 @@
-from pdf2ppt.gui import start, open_file_explorer
+from pdf2ppt.gui import start
 
 
 if __name__ == "__main__":
