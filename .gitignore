@@ -1,0 +1,6 @@
+__pycache__/
+.DS_Store
+.vscode/
+output_images/
+sample.pdf
+test*
