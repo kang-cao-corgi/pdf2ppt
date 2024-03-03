@@ -1,12 +1,14 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QFileDialog, QMessageBox
-import traceback
-from functools import partial
-import time
-from convert import convert
-from PyQt5.QtCore import QThread, pyqtSignal
-import subprocess
 import platform
+import sys
+import subprocess
+import time
+
+from functools import partial
+
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QFileDialog, QMessageBox
+from PyQt5.QtCore import QThread, pyqtSignal
+
+from convert import convert
 
 
 DEBUG = 0

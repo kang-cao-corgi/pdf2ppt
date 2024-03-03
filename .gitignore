@@ -4,3 +4,5 @@ __pycache__/
 output_images/
 sample.pdf
 test*
+build/
+dist/
